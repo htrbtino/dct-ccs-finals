@@ -1,3 +1,25 @@
+<?php
+session_start();
+
+require_once 'functions.php'; // Ensure this points to your database connection setup
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
+    $email = $_POST['email'];
+    $password = md5($_POST['password']); // Hashing the password
+
+    // Prepare and execute SQL query to check credentials
+    $sql = "SELECT * FROM users WHERE email='$email' AND password='$password'";
+    $result = $conn->query($sql);
+
+    if ($result && $result->num_rows > 0) {
+        $_SESSION['email'] = $email; // Set session variable
+        header("Location: dashboard.php"); // Redirect to dashboard
+        exit(); // Ensure no further code is executed after redirect
+    } else {
+        $error_message = "Invalid email or password"; // Set error message
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
