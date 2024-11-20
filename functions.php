@@ -5,10 +5,10 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 // Database configuration
-$db_host = 'localhost'; // Hostname
-$db_user = 'root'; // Your actual MySQL username
-$db_pass = ''; // Your actual database password
-$db_name = 'dct-ccs-finals'; // Database name
+$db_host = 'localhost'; 
+$db_user = 'root'; 
+$db_pass = ''; 
+$db_name = 'dct-ccs-finals';
 
 // Create connection
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
