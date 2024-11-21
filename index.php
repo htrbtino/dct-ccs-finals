@@ -1,31 +1,30 @@
 <?php
 session_start();
 
-require_once 'functions.php'; // Ensure this points to your database connection setup
+require_once 'functions.php'; // Include database connection setup
 
+// Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
-    $email = $_POST['email'];
-    $password = md5($_POST['password']); // Hashing the password
+    // Retrieve form data using the postData function
+    $email = postData('email');
+    $password = postData('password'); // Password will be hashed in the function
 
-    // Prepare and execute SQL query to check credentials
-    $sql = "SELECT * FROM users WHERE email=? AND password=?";
-    $stmt = $conn->prepare($sql); // Use prepared statements for security
-    $stmt->bind_param("ss", $email, $password); // Bind parameters
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Call the login function and get the result
+    $result = login($email, $password);
 
+    // Check if a user was found
     if ($result && $result->num_rows > 0) {
-        // Fetch user data (optional)
+        // Fetch user data
         $user = $result->fetch_assoc();
         
-        // Set session variables
+        // Set session variables for logged-in user
         $_SESSION['user_id'] = $user['id']; // Store user ID in session
         $_SESSION['email'] = $email; // Store email in session
         
-        header("Location: dashboard.php"); // Redirect to dashboard
+        header("Location: admin/dashboard.php"); // Redirect to dashboard in admin folder
         exit(); // Ensure no further code is executed after redirect
     } else {
-        $error_message = "Invalid email or password"; // Set error message
+        $error_message = "Invalid email or password"; // Set error message for invalid credentials
     }
 }
 ?>

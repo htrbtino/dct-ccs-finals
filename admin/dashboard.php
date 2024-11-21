@@ -1,15 +1,17 @@
 <?php
 session_start();
-require_once 'functions.php'; // Include your database connection
+require_once '../functions.php'; // Adjust path based on your directory structure
+
+require './partials/header.php';
+require './partials/side-bar.php';
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: index.php"); // Redirect to login if not authenticated
+    header("Location: ../index.php"); // Redirect to login if not authenticated
     exit();
 }
 
 // Fetch counts from the database
-// Assuming you have a 'subjects' table and a 'students' table with appropriate fields
 
 // Count total subjects
 $stmt = $conn->prepare("SELECT COUNT(*) as total_subjects FROM subjects");
@@ -23,17 +25,13 @@ $stmt->execute();
 $student_result = $stmt->get_result();
 $total_students = $student_result->fetch_assoc()['total_students'];
 
-// Count failed students (assuming there's a 'status' field that indicates pass/fail)
-$stmt = $conn->prepare("SELECT COUNT(*) as total_failed FROM students WHERE status = 'failed'");
-$stmt->execute();
-$failed_result = $stmt->get_result();
-$total_failed = $failed_result->fetch_assoc()['total_failed'];
+// Initialize variables for failed and passed students
+$failed_students = 0; // Initialize to 0 if not using
+$total_passed = 0;   // Initialize to 0 if not using
 
-// Count passed students
-$stmt = $conn->prepare("SELECT COUNT(*) as total_passed FROM students WHERE status = 'passed'");
-$stmt->execute();
-$passed_result = $stmt->get_result();
-$total_passed = $passed_result->fetch_assoc()['total_passed'];
+// Since we're removing the status, we will not count passed or failed students.
+// If you need other statistics, you can add them here.
+
 ?>
 
 <!-- Template Files here -->
@@ -45,7 +43,7 @@ $total_passed = $passed_result->fetch_assoc()['total_passed'];
             <div class="card border-primary mb-3">
                 <div class="card-header bg-primary text-white border-primary">Number of Subjects:</div>
                 <div class="card-body text-primary">
-                    <h5 class="card-title">0</h5>
+                    <h5 class="card-title"><?php echo $total_subjects; ?></h5>
                 </div>
             </div>
         </div>
@@ -53,7 +51,7 @@ $total_passed = $passed_result->fetch_assoc()['total_passed'];
             <div class="card border-primary mb-3">
                 <div class="card-header bg-primary text-white border-primary">Number of Students:</div>
                 <div class="card-body text-success">
-                    <h5 class="card-title">0</h5>
+                    <h5 class="card-title"><?php echo $total_students; ?></h5>
                 </div>
             </div>
         </div>
@@ -61,7 +59,7 @@ $total_passed = $passed_result->fetch_assoc()['total_passed'];
             <div class="card border-danger mb-3">
                 <div class="card-header bg-danger text-white border-danger">Number of Failed Students:</div>
                 <div class="card-body text-danger">
-                    <h5 class="card-title">0</h5>
+                    <h5 class="card-title"><?php echo $failed_students; ?></h5>
                 </div>
             </div>
         </div>
@@ -69,7 +67,7 @@ $total_passed = $passed_result->fetch_assoc()['total_passed'];
             <div class="card border-success mb-3">
                 <div class="card-header bg-success text-white border-success">Number of Passed Students:</div>
                 <div class="card-body text-success">
-                    <h5 class="card-title">0></h5>
+                    <h5 class="card-title"><?php echo $total_passed; ?></h5> <!-- Fixed closing tag -->
                 </div>
             </div>
         </div>
