@@ -1,4 +1,4 @@
-?php
+<?php
 session_start();
 require_once '../functions.php'; // Adjust path based on your directory structure
 
