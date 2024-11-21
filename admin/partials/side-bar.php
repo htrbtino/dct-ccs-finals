@@ -13,14 +13,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2" href="#">
-                        <i class="fa-solid fa-gauge fa-fw me-2"></i>
-                        Subjects
-                    </a>
-                    <li class="nav-item">
-    <a class="nav-link d-flex align-items-center gap-2" href="../subjects/add.php"> <!-- Link to add.php -->
+    <a class="nav-link d-flex align-items-center gap-2" href="subject/add.php"> <!-- Correct link to add.php -->
         <i class="fa-solid fa-gauge fa-fw me-2"></i>
         Subjects
+    </a>
+</li>
+    <a class="nav-link d-flex align-items-center gap-2" href=""> <!-- Link to add.php -->
+        <i class="fa-solid fa-gauge fa-fw me-2"></i>
+        Students
     </a>
 </li>               
             </ul>

@@ -1,7 +1,7 @@
 <?php
 session_start();
-require './partials/header.php';
-require './partials/side-bar.php';
+require '../partials/header.php'; // Updated path to header.php
+require '../partials/side-bar.php'; // Updated path to side-bar.php
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -16,7 +16,7 @@ if (!isset($_SESSION['user_id'])) {
 
     <!-- Add New Item Form -->
     <div class="card p-4 mb-5">
-        <form method="POST" action="add.php"> <!-- Form submits to itself -->
+        <form method="getPostDataT" action="add.php"> <!-- Form submits to itself -->
             <div class="mb-3">
                 <label for="item_name" class="form-label">Item Name</label>
                 <input type="text" class="form-control" id="item_name" name="item_name" placeholder="Enter item name" required>
