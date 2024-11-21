@@ -50,12 +50,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="card p-4 mb-5">
         <form method="POST" action="add.php"> <!-- Form submits to itself -->
             <div class="mb-3">
-                <label for="item_name" class="form-label">Subject Code</label>
-                <input type="text" class="form-control" id="item_name" name="item_name" placeholder="Enter subject code" required>
+                <label for="item_name" class="form-label"></label>
+                <input type="text" class="form-control" id="item_name" name="item_name" placeholder="Subject Code" required>
             </div>
             <div class="mb-3">
-                <label for="item_description" class="form-label">Subject Name</label>
-                <input type="text" class="form-control" id="item_description" name="item_description" placeholder="Enter subject name" required>
+                <label for="item_description" class="form-label"></label>
+                <input type="text" class="form-control" id="item_description" name="item_description" placeholder="Subject Name" required>
             </div>
             <button type="submit" class="btn btn-primary btn-sm w-100">Add Subject</button>
         </form>
