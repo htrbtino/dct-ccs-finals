@@ -18,7 +18,7 @@
                         Subjects
                     </a>
                     <li class="nav-item">
-    <a class="nav-link d-flex align-items-center gap-2" href="add.php"> <!-- Link to add.php -->
+    <a class="nav-link d-flex align-items-center gap-2" href="../subjects/add.php"> <!-- Link to add.php -->
         <i class="fa-solid fa-gauge fa-fw me-2"></i>
         Subjects
     </a>
