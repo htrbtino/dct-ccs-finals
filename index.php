@@ -8,11 +8,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
     $password = md5($_POST['password']); // Hashing the password
 
     // Prepare and execute SQL query to check credentials
-    $sql = "SELECT * FROM users WHERE email='$email' AND password='$password'";
-    $result = $conn->query($sql);
+    $sql = "SELECT * FROM users WHERE email=? AND password=?";
+    $stmt = $conn->prepare($sql); // Use prepared statements for security
+    $stmt->bind_param("ss", $email, $password); // Bind parameters
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Debugging output
+    if ($result) {
+        echo "Query executed successfully.<br>";
+        echo "Number of rows returned: " . $result->num_rows . "<br>";
+    } else {
+        echo "Query failed: " . htmlspecialchars($stmt->error) . "<br>";
+    }
 
     if ($result && $result->num_rows > 0) {
-        $_SESSION['email'] = $email; // Set session variable
+        // Fetch user data (optional)
+        $user = $result->fetch_assoc();
+        
+        // Set session variables
+        $_SESSION['user_id'] = $user['id']; // Store user ID in session
+        $_SESSION['email'] = $email; // Store email in session
+        
         header("Location: dashboard.php"); // Redirect to dashboard
         exit(); // Ensure no further code is executed after redirect
     } else {
@@ -27,23 +44,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <title></title>
+    <title>Login</title>
 </head>
 
 <body class="bg-secondary-subtle">
     <div class="d-flex align-items-center justify-content-center vh-100">
         <div class="col-3">
-            <!-- Server-Side Validation Messages should be placed here -->
+
+        <?php if (isset($error_message)): ?>
+                <div class="alert alert-danger" role="alert">
+                    <?php echo htmlspecialchars($error_message); ?>
+                </div>
+            <?php endif; ?>
             <div class="card">
                 <div class="card-body">
                     <h1 class="h3 mb-4 fw-normal">Login</h1>
                     <form method="post" action="">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="email" name="email" placeholder="user1@example.com">
+                            <input type="text" class="form-control" id="email" name="email" placeholder="user1@example.com" required>
                             <label for="email">Email address</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                             <label for="password">Password</label>
                         </div>
                         <div class="form-floating mb-3">
