@@ -1,5 +1,37 @@
 <?php
-require_once 'functions.php'; // Include database connection
+require_once 'functions.php'; // Include your database connection
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $name = $_POST['name'];
+
+    // Check if email already exists
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        echo "Email already registered.";
+    } else {
+        // Hash the password
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        // Insert new user
+        $stmt = $conn->prepare("INSERT INTO users (email, password, name) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $email, $hashed_password, $name);
+        
+        if ($stmt->execute()) {
+            echo "User registered successfully.";
+            // Optionally redirect to a login page or another page
+            // header("Location: login.php");
+            // exit();
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
