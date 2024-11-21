@@ -6,29 +6,34 @@
         </div>
         <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
             <ul class="nav flex-column">
-            <li class="nav-item">
-    <a class="nav-link d-flex align-items-center gap-2" href="../dashboard.php"> <!-- Link to dashboard.php -->
-        <i class="fa-solid fa-gauge fa-fw me-2"></i>
-        Dashboard
-    </a>
-</li>
+                <?php
+                // Get the current page filename
+                $current_page = basename($_SERVER['PHP_SELF']);
+                ?>
                 <li class="nav-item">
-    <a class="nav-link d-flex align-items-center gap-2" href="subject/add.php"> <!-- Correct link to add.php -->
-    <i class="fa-solid fa-file fa-fw me-2"></i> Subjects
-    </a>
-</li>
-    <a class="nav-link d-flex align-items-center gap-2" href=""> <!-- Link to add.php -->
-    <i class="fa-solid fa-user fa-fw me-2"></i> Students
-    </a>
-</li>               
+                    <a class="nav-link d-flex align-items-center gap-2 <?= $current_page == 'dashboard.php' ? 'fw-bold' : '' ?>" href="../dashboard.php">
+                        <i class="fa-solid fa-gauge fa-fw me-2"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-2 <?= $current_page == 'add.php' ? 'fw-bold' : '' ?>" href="subject/add.php">
+                        <i class="fa-solid fa-file fa-fw me-2"></i> Subjects
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-2 <?= $current_page == 'students.php' ? 'fw-bold' : '' ?>" href="">
+                        <i class="fa-solid fa-user fa-fw me-2"></i> Students
+                    </a>
+                </li>               
             </ul>
            
             <hr class="my-3">
 
             <ul class="nav flex-column mb-auto">
                 <li class="nav-item">
-                <a class="nav-link d-flex align-items-center gap-2" href="logout.php">
-                    <i class="fa-solid fa-right-to-bracket fa-fw me-2"></i>                        
+                    <a class="nav-link d-flex align-items-center gap-2" href="logout.php">
+                        <i class="fa-solid fa-right-to-bracket fa-fw me-2"></i>                        
                         Logout
                     </a>
                 </li>
