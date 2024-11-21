@@ -14,14 +14,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Debugging output
-    if ($result) {
-        echo "Query executed successfully.<br>";
-        echo "Number of rows returned: " . $result->num_rows . "<br>";
-    } else {
-        echo "Query failed: " . htmlspecialchars($stmt->error) . "<br>";
-    }
-
     if ($result && $result->num_rows > 0) {
         // Fetch user data (optional)
         $user = $result->fetch_assoc();
