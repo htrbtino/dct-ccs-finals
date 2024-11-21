@@ -12,20 +12,35 @@ if (!isset($_SESSION['user_id'])) {
 
 // Initialize variables for success/error messages
 $message = "";
+$error = [];
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $subject_code = postData("item_name"); // Assuming item_name is used for subject_code
-    $subject_name = postData("item_description"); // Assuming item_description is used for subject_name
+    $subject_code = isset($_POST["item_name"]) ? trim($_POST["item_name"]) : ""; // Subject code
+    $subject_name = isset($_POST["item_description"]) ? trim($_POST["item_description"]) : ""; // Subject name
 
-    // Add the new subject to the database
-    if (addSubject($subject_code, $subject_name)) {
-        $message = "Subject added successfully!";
-    } else {
-        $message = "Failed to add subject. Please try again.";
+    // Validate input
+    if (empty($subject_code)) {
+        $error[] = "Subject Code is required";
+    }
+    if (empty($subject_name)) {
+        $error[] = "Subject Name is required";
+    }
+
+    // If no errors, proceed with adding the subject
+    if (empty($error)) {
+        if (addSubject($subject_code, $subject_name)) {
+            $message = "Subject added successfully!";
+        } else {
+            $error[] = "Failed to add subject. Please try again.";
+        }
     }
 }
 ?>
+
+<!-- Include Bootstrap CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Content Area -->
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pt-5">    
@@ -39,10 +54,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </ol>
     </nav>
 
-    <!-- Display success/error message -->
+    <!-- Display errors -->
+    <?php if (!empty($error)): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>System Errors</strong>
+            <ul>
+                <?php foreach ($error as $err): ?>
+                    <li><?php echo htmlspecialchars($err); ?></li>
+                <?php endforeach; ?>
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
+    <!-- Display success message -->
     <?php if ($message): ?>
-        <div class="alert alert-info" role="alert">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
             <?php echo htmlspecialchars($message); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
 
@@ -51,11 +80,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <form method="POST" action="add.php"> <!-- Form submits to itself -->
             <div class="mb-3">
                 <label for="item_name" class="form-label"></label>
-                <input type="text" class="form-control" id="item_name" name="item_name" placeholder="Subject Code" required>
+                <input type="text" class="form-control" id="item_name" name="item_name" placeholder="Enter Subject Code">
             </div>
             <div class="mb-3">
                 <label for="item_description" class="form-label"></label>
-                <input type="text" class="form-control" id="item_description" name="item_description" placeholder="Subject Name" required>
+                <input type="text" class="form-control" id="item_description" name="item_description" placeholder="Enter Subject Name">
             </div>
             <button type="submit" class="btn btn-primary btn-sm w-100">Add Subject</button>
         </form>
@@ -98,7 +127,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </tbody>
         </table>
     </div>
-
 </main>
 
 <?php
