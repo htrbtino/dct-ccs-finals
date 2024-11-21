@@ -62,4 +62,30 @@ function fetchSubjects() {
 
     // Check if there are results and return them as an associative array
     return ($result && $result->num_rows > 0) ? $result->fetch_all(MYSQLI_ASSOC) : []; // Return empty array if no subjects found
+}// Function to fetch a subject by its code
+function fetchSubjectByCode($subject_code) {
+    global $conn; // Use the global connection variable
+
+    // Prepare SQL statement to select a subject by its code
+    $sql = "SELECT * FROM subjects WHERE subject_code = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $subject_code); // Bind parameters
+    $stmt->execute();
+    
+    // Return the result set as an associative array
+    return $stmt->get_result()->fetch_assoc(); // Fetch the subject details as an associative array
 }
+
+// Function to update an existing subject
+function updateSubject($old_subject_code, $new_subject_code, $new_subject_name) {
+    global $conn; // Use the global connection variable
+
+    // Prepare SQL statement to update a subject
+    $sql = "UPDATE subjects SET subject_code = ?, subject_name = ? WHERE subject_code = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sss", $new_subject_code, $new_subject_name, $old_subject_code); // Bind parameters
+
+    // Execute the statement and check for success
+    return $stmt->execute(); // Returns true on success, false on failure
+}
+?>
