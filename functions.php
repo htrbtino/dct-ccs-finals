@@ -1,4 +1,4 @@
-<?php    
+<?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -43,13 +43,25 @@ function postData($key) {
 function addSubject($subject_code, $subject_name) {
     global $conn; // Use the global connection variable
 
+    // Check if the subject already exists
+    $check_sql = "SELECT * FROM subjects WHERE subject_code = ?";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param("s", $subject_code);
+    $check_stmt->execute();
+    $result = $check_stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // Subject already exists
+        return "duplicate";
+    }
+
     // Prepare SQL statement to insert a new subject
     $sql = "INSERT INTO subjects (subject_code, subject_name) VALUES (?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $subject_code, $subject_name); // Bind parameters
+    $stmt->bind_param("ss", $subject_code, $subject_name);
 
     // Execute the statement and check for success
-    return $stmt->execute(); // Returns true on success, false on failure
+    return $stmt->execute() ? "success" : "error"; // Return success, duplicate, or error
 }
 
 // Function to fetch all subjects from the database
@@ -62,7 +74,9 @@ function fetchSubjects() {
 
     // Check if there are results and return them as an associative array
     return ($result && $result->num_rows > 0) ? $result->fetch_all(MYSQLI_ASSOC) : []; // Return empty array if no subjects found
-}// Function to fetch a subject by its code
+}
+
+// Function to fetch a subject by its code
 function fetchSubjectByCode($subject_code) {
     global $conn; // Use the global connection variable
 

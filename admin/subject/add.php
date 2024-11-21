@@ -29,8 +29,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // If no errors, proceed with adding the subject
     if (empty($error)) {
-        if (addSubject($subject_code, $subject_name)) {
+        $result = addSubject($subject_code, $subject_name);
+
+        if ($result === "success") {
             $message = "Subject added successfully!";
+        } elseif ($result === "duplicate") {
+            $error[] = "Duplicate Subject Record"; // Handle duplicate subject error
         } else {
             $error[] = "Failed to add subject. Please try again.";
         }
@@ -77,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <!-- Add New Subject Form -->
     <div class="card p-4 mb-5">
-        <form method="POST" action="add.php"> <!-- Form submits to itself -->
+        <form method="POST" action="add.php">
             <div class="mb-3">
                 <label for="item_name" class="form-label"></label>
                 <input type="text" class="form-control" id="item_name" name="item_name" 
