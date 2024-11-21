@@ -12,20 +12,28 @@ if (!isset($_SESSION['user_id'])) {
 
 <!-- Content Area -->
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pt-5">    
-    <h1 class="h2">Add New Item</h1>
+    <h1 class="h2">Add a New Subject</h1>
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Add Subject</li>
+        </ol>
+    </nav>
 
     <!-- Add New Item Form -->
     <div class="card p-4 mb-5">
         <form method="getPostDataT" action="add.php"> <!-- Form submits to itself -->
             <div class="mb-3">
-                <label for="item_name" class="form-label">Item Name</label>
-                <input type="text" class="form-control" id="item_name" name="item_name" placeholder="Enter item name" required>
+                <label for="item_name" class="form-label"></label>
+                <input type="text" class="form-control" id="item_name" name="item_name" placeholder="Subject Code" required>
             </div>
             <div class="mb-3">
-                <label for="item_description" class="form-label">Item Description</label>
-                <textarea class="form-control" id="item_description" name="item_description" rows="3" placeholder="Enter item description" required></textarea>
+                <label for="item_description" class="form-label"></label>
+                <input type="text" class="form-control" id="item_description" name="item_description" placeholder="Subject Name" required>
             </div>
-            <button type="submit" class="btn btn-primary btn-sm w-100">Add Item</button>
+            <button type="submit" class="btn btn-primary btn-sm w-100">Add Subject</button>
         </form>
     </div>
 
