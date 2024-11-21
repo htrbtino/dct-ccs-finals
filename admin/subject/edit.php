@@ -1,5 +1,6 @@
 <?php
 session_start();
+require '../../functions.php'; // Include database connection setup
 require '../partials/header.php'; // Include header
 require '../partials/side-bar.php'; // Include sidebar
 
