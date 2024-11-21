@@ -6,7 +6,7 @@ require '../partials/side-bar.php'; // Include sidebar
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../index.php"); // Redirect to login if not authenticated
+    header("Location: ../../index.php"); // Redirect to login if not authenticated
     exit();
 }
 
@@ -17,19 +17,18 @@ $error = [];
 // Check if subject_code is provided in the URL
 if (isset($_GET['subject_code'])) {
     $subject_code = $_GET['subject_code'];
-    
+
     // Fetch the subject details from the database
     $stmt = $conn->prepare("SELECT * FROM subjects WHERE subject_code = ?");
     $stmt->bind_param("s", $subject_code);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Check if the subject exists
     if ($result->num_rows > 0) {
         $subject = $result->fetch_assoc();
     } else {
-        // Handle case where subject does not exist
-        header("Location: add.php"); // Redirect to add page if subject not found
+        // Redirect to add page if subject not found
+        header("Location: add.php");
         exit();
     }
 } else {
@@ -53,10 +52,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // If no errors, update the subject in the database
     if (empty($error)) {
-        $update_stmt = $conn->prepare("UPDATE subjects SET subject_code = ?, subject_name = ? WHERE subject_code = ?");
-        $update_stmt->bind_param("sss", $new_subject_code, $new_subject_name, $subject_code);
+        $stmt = $conn->prepare("UPDATE subjects SET subject_code = ?, subject_name = ? WHERE subject_code = ?");
+        $stmt->bind_param("sss", $new_subject_code, $new_subject_name, $subject_code);
 
-        if ($update_stmt->execute()) {
+        if ($stmt->execute()) {
             $message = "Subject updated successfully!";
             $subject_code = $new_subject_code; // Update local variable for display purposes
         } else {
@@ -66,15 +65,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<!-- Content Area -->
-<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pt-5">    
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pt-5">
     <h1 class="h2">Edit Subject</h1>
 
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="add.php">Add Subject</a></li>
+            <li class="breadcrumb-item"><a href="add.php">Subjects</a></li>
             <li class="breadcrumb-item active" aria-current="page">Edit Subject</li>
         </ol>
     </nav>
@@ -106,12 +104,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="mb-3">
                 <label for="item_name" class="form-label">Subject Code</label>
                 <input type="text" class="form-control" id="item_name" name="item_name" 
-                       value="<?= isset($_POST['item_name']) ? htmlspecialchars($_POST['item_name']) : htmlspecialchars($subject['subject_code']) ?>">
+                       value="<?= htmlspecialchars($subject['subject_code']) ?>">
             </div>
             <div class="mb-3">
                 <label for="item_description" class="form-label">Subject Name</label>
                 <input type="text" class="form-control" id="item_description" name="item_description" 
-                       value="<?= isset($_POST['item_description']) ? htmlspecialchars($_POST['item_description']) : htmlspecialchars($subject['subject_name']) ?>">
+                       value="<?= htmlspecialchars($subject['subject_name']) ?>">
             </div>
             <button type="submit" class="btn btn-primary btn-sm w-100">Update Subject</button>
         </form>
@@ -119,5 +117,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </main>
 
 <?php
-include '../partials/footer.php'; // Include the footer
+include '../partials/footer.php'; // Include footer
 ?>

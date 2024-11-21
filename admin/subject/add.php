@@ -6,7 +6,7 @@ require '../partials/side-bar.php'; // Include sidebar
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../index.php"); // Redirect to login if not authenticated
+    header("Location: ../../index.php"); // Redirect to login if not authenticated
     exit();
 }
 

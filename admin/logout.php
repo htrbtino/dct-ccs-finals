@@ -1,13 +1,7 @@
 <?php
-session_start(); // Start the session
-
-// Unset all session variables
+session_start();
 $_SESSION = [];
-
-// Destroy the session
 session_destroy();
-
-// Redirect to the login page
-header("Location: ../index.php"); // Adjust path if needed
+header("Location: ../../index.php");
 exit();
 ?>

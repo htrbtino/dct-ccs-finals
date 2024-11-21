@@ -6,7 +6,7 @@ require '../partials/side-bar.php'; // Include sidebar
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../index.php"); // Redirect to login if not authenticated
+    header("Location: ../../index.php"); // Redirect to login if not authenticated
     exit();
 }
 
@@ -16,9 +16,9 @@ $message = "";
 // Check if subject_code is provided in the URL
 if (isset($_GET['subject_code'])) {
     $subject_code = $_GET['subject_code'];
-    
+
     // Fetch the subject details from the database
-    $subject_data = fetchSubjectByCode($subject_code); // Fetch subject details
+    $subject_data = fetchSubjectByCode($subject_code); // Replace with your specific fetch function
 
     if (!$subject_data) {
         // Handle case where subject does not exist
@@ -27,7 +27,7 @@ if (isset($_GET['subject_code'])) {
     }
 
     // Handle form submission for deleting the subject
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (deleteSubject($subject_code)) {
             $message = "Subject deleted successfully!";
             header("Location: add.php"); // Redirect to add page after deletion
