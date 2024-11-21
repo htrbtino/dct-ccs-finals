@@ -88,4 +88,17 @@ function updateSubject($old_subject_code, $new_subject_code, $new_subject_name) 
     // Execute the statement and check for success
     return $stmt->execute(); // Returns true on success, false on failure
 }
+
+// Function to delete a subject by its code
+function deleteSubject($subject_code) {
+    global $conn; // Use the global connection variable
+
+    // Prepare SQL statement to delete a subject
+    $sql = "DELETE FROM subjects WHERE subject_code = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $subject_code); // Bind parameters
+
+    // Execute the statement and check for success
+    return $stmt->execute(); // Returns true on success, false on failure
+}
 ?>
