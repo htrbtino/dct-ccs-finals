@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+require '../../functions.php'; // Include database connection setup
 require '../partials/header.php'; // Include header
 require '../partials/side-bar.php'; // Include sidebar
 
@@ -16,50 +16,68 @@ $message = "";
 // Check if subject_code is provided in the URL
 if (isset($_GET['subject_code'])) {
     $subject_code = $_GET['subject_code'];
+    
+    // Fetch the subject details from the database
+    $subject_data = fetchSubjectByCode($subject_code); // Fetch subject details
 
-    // Prepare SQL statement to delete the subject
-    $stmt = $conn->prepare("DELETE FROM subjects WHERE subject_code = ?");
-    $stmt->bind_param("s", $subject_code); // Bind parameters
+    if (!$subject_data) {
+        // Handle case where subject does not exist
+        header("Location: add.php"); // Redirect to add page if subject not found
+        exit();
+    }
 
-    // Execute the statement and check for success
-    if ($stmt->execute()) {
-        $message = "Subject deleted successfully!";
-    } else {
-        $message = "Failed to delete subject. Please try again.";
+    // Handle form submission for deleting the subject
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (deleteSubject($subject_code)) {
+            $message = "Subject deleted successfully!";
+            header("Location: add.php"); // Redirect to add page after deletion
+            exit();
+        } else {
+            $message = "Failed to delete subject. Please try again.";
+        }
     }
 } else {
-    // Redirect to add page if no subject_code is provided
-    header("Location: add.php");
-    exit();
+    $message = "No subject code provided. Please go back and select a subject to delete.";
 }
 ?>
 
-<!-- Content Area -->
-<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pt-5">    
-    <h1 class="h2">Delete Subject</h1>
+<div class="col-md-9 col-lg-10">
 
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="add.php">Add Subject</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Delete Subject</li>
-        </ol>
-    </nav>
+<h3 class="text-left mb-5 mt-5">Delete Subject</h3>
+
+<!-- Breadcrumb Navigation -->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="add.php">Add Subject</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Delete Subject</li>
+    </ol>
+</nav>
+
+<div class="border p-5">
+    
+    <p class="text-left">Are you sure you want to delete the following subject record?</p>
+    <ul class="text-left">
+        <li><strong>Subject Code:</strong> <?= htmlspecialchars($subject_data['subject_code']) ?></li>
+        <li><strong>Subject Name:</strong> <?= htmlspecialchars($subject_data['subject_name']) ?></li>
+    </ul>
 
     <!-- Display success/error message -->
     <?php if ($message): ?>
         <div class="alert alert-info" role="alert">
             <?php echo htmlspecialchars($message); ?>
         </div>
-        <a href="add.php" class="btn btn-secondary">Back to Subject List</a> <!-- Link back to the subject list -->
-    <?php else: ?>
-        <div class="alert alert-warning" role="alert">
-            No subject code provided. Please go back and select a subject to delete.
-        </div>
-        <a href="add.php" class="btn btn-secondary">Back to Subject List</a> <!-- Link back to the subject list -->
     <?php endif; ?>
-</main>
+
+    <!-- Confirmation Form -->
+    <form method="POST" class="text-left">
+        <a href="add.php" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-danger">Delete Subject Record</button>
+    </form>
+
+</div>
+
+</div>
 
 <?php
 include '../partials/footer.php'; // Include the footer
