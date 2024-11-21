@@ -39,6 +39,16 @@ function postData($key) {
     return isset($_POST[$key]) ? htmlspecialchars(trim($_POST[$key])) : null;
 }
 
+// Function to check if a subject exists
+function subjectExists($subject_code) {
+    global $conn;
+    $stmt = $conn->prepare("SELECT * FROM subjects WHERE subject_code = ?");
+    $stmt->bind_param("s", $subject_code);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->num_rows > 0;
+}
+
 // Function to add a new subject
 function addSubject($subject_code, $subject_name) {
     global $conn; // Use the global connection variable
@@ -114,5 +124,45 @@ function deleteSubject($subject_code) {
 
     // Execute the statement and check for success
     return $stmt->execute(); // Returns true on success, false on failure
+}
+
+// Function to add a student
+function addStudent($student_id, $first_name, $last_name, $subject_code) {
+    global $conn;
+
+    // Check for duplicate student ID
+    $stmt = $conn->prepare("SELECT * FROM students WHERE student_id = ?");
+    $stmt->bind_param("s", $student_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        return "duplicate";
+    }
+
+    // Insert student into the database
+    $stmt = $conn->prepare("INSERT INTO students (student_id, first_name, last_name) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $student_id, $first_name, $last_name);
+    if ($stmt->execute()) {
+        // Link student to subject in the students_subjects table
+        $student_id = $conn->insert_id; // Get the last inserted student ID
+        $subject_stmt = $conn->prepare("INSERT INTO students_subjects (student_id, subject_id, grade) VALUES (?, (SELECT id FROM subjects WHERE subject_code = ?), 0)");
+        $subject_stmt->bind_param("is", $student_id, $subject_code);
+        $subject_stmt->execute();
+        return "success";
+    } else {
+        return "error";
+    }
+}
+
+// Function to fetch all students
+function fetchStudents() {
+    global $conn;
+    $sql = "SELECT students.student_id, students.first_name, students.last_name, subjects.subject_code 
+            FROM students 
+            LEFT JOIN students_subjects ON students.id = students_subjects.student_id 
+            LEFT JOIN subjects ON students_subjects.subject_id = subjects.id";
+    $result = $conn->query($sql);
+    return ($result && $result->num_rows > 0) ? $result->fetch_all(MYSQLI_ASSOC) : [];
 }
 ?>

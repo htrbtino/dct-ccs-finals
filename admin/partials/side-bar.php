@@ -26,7 +26,7 @@ $base_path = (basename(dirname($_SERVER['PHP_SELF'])) === 'admin') ? '' : '../';
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2 <?= $current_page == 'students.php' ? 'fw-bold' : '' ?>" href="<?= $base_path ?>student/students.php">
+                    <a class="nav-link d-flex align-items-center gap-2 <?= $current_page == 'students.php' ? 'fw-bold' : '' ?>" href="<?= $base_path ?>student/register.php">
                         <i class="fa-solid fa-user fa-fw me-2"></i> Students
                     </a>
                 </li>               

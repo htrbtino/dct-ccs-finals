@@ -1,69 +1,165 @@
 <?php
-require_once 'functions.php'; // Include your database connection
+// Enable error reporting
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
+// Start session and check authentication
+session_start();
+require '../../functions.php'; // Include the functions file
+require '../partials/header.php'; // Include the header file
+require '../partials/side-bar.php'; // Include the sidebar file
+
+// Authentication guard
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../index.php"); // Redirect to login page if not authenticated
+    exit();
+}
+
+// Initialize variables for error/success messages
+$message = "";
+$error = [];
+
+// Handle form submission for registering a student
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $name = $_POST['name'];
+    $student_id = isset($_POST["student_id"]) ? trim($_POST["student_id"]) : "";
+    $first_name = isset($_POST["first_name"]) ? trim($_POST["first_name"]) : "";
+    $last_name = isset($_POST["last_name"]) ? trim($_POST["last_name"]) : "";
+    $subject_code = isset($_POST["subject_code"]) ? trim($_POST["subject_code"]) : "";
 
-    // Check if email already exists
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Validation
+    if (empty($student_id)) {
+        $error[] = "Student ID is required";
+    }
+    if (empty($first_name)) {
+        $error[] = "First Name is required";
+    }
+    if (empty($last_name)) {
+        $error[] = "Last Name is required";
+    }
+    if (empty($subject_code)) {
+        $error[] = "Subject Code is required";
+    }
 
-    if ($result->num_rows > 0) {
-        echo "Email already registered.";
-    } else {
-        // Hash the password
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    // Check if subject exists
+    if (!empty($subject_code) && !subjectExists($subject_code)) {
+        $error[] = "Subject does not exist";
+    }
 
-        // Insert new user
-        $stmt = $conn->prepare("INSERT INTO users (email, password, name) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $email, $hashed_password, $name);
-        
-        if ($stmt->execute()) {
-            echo "User registered successfully.";
-            // Optionally redirect to a login page or another page
-            // header("Location: login.php");
-            // exit();
+    // If no validation errors, proceed to register student
+    if (empty($error)) {
+        $result = addStudent($student_id, $first_name, $last_name, $subject_code);
+
+        if ($result === "success") {
+            $message = "Student registered successfully!";
+        } elseif ($result === "duplicate") {
+            $error[] = "Duplicate Student Record"; // Handle duplicate student error
         } else {
-            echo "Error: " . $stmt->error;
+            $error[] = "Failed to register student. Please try again.";
         }
     }
 }
+
+// Fetch existing students for display
+$students = fetchStudents();
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" href="partials/custom-dashboard.css"> <!-- Link to your custom CSS -->
-</head>
-<body>
+<!-- Content Area -->
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pt-5">
+    <h1 class="h2">Register Student</h1>
 
-<?php include 'partials/header.php'; ?> <!-- Include header -->
-<?php include 'partials/side-bar.php'; ?> <!-- Include sidebar -->
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Register Student</li>
+        </ol>
+    </nav>
 
-<div class="container">
-    <h2>Register</h2>
-    <form action="register.php" method="POST">
-        <label for="email"><b>Email</b></label>
-        <input type="text" placeholder="Enter Email" name="email" required>
+    <!-- Display errors -->
+    <?php if (!empty($error)): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>System Errors</strong>
+            <ul>
+                <?php foreach ($error as $err): ?>
+                    <li><?php echo htmlspecialchars($err); ?></li>
+                <?php endforeach; ?>
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
 
-        <label for="password"><b>Password</b></label>
-        <input type="password" placeholder="Enter Password" name="password" required>
+    <!-- Display success message -->
+    <?php if ($message): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?php echo htmlspecialchars($message); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
 
-        <label for="name"><b>Name</b></label>
-        <input type="text" placeholder="Enter Your Name" name="name" required>
+    <!-- Student Registration Form -->
+    <div class="card p-4 mb-5">
+        <form method="POST" action="register.php">
+            <div class="mb-3">
+                <label for="student_id" class="form-label">Student ID</label>
+                <input type="text" class="form-control" id="student_id" name="student_id" 
+                       value="<?php echo isset($_POST['student_id']) ? htmlspecialchars($_POST['student_id']) : ''; ?>" 
+                       placeholder="Enter Student ID">
+            </div>
+            <div class="mb-3">
+                <label for="first_name" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" 
+                       value="<?php echo isset($_POST['first_name']) ? htmlspecialchars($_POST['first_name']) : ''; ?>" 
+                       placeholder="Enter First Name">
+            </div>
+            <div class="mb-3">
+                <label for="last_name" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="last_name" name="last_name" 
+                       value="<?php echo isset($_POST['last_name']) ? htmlspecialchars($_POST['last_name']) : ''; ?>" 
+                       placeholder="Enter Last Name">
+            </div>
+            <div class="mb-3">
+                <label for="subject_code" class="form-label">Subject Code</label>
+                <input type="text" class="form-control" id="subject_code" name="subject_code" 
+                       value="<?php echo isset($_POST['subject_code']) ? htmlspecialchars($_POST['subject_code']) : ''; ?>" 
+                       placeholder="Enter Subject Code">
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm w-100">Register Student</button>
+        </form>
+    </div>
 
-        <button type="submit">Register</button>
-    </form>
-</div>
+    <!-- Student List Table -->
+    <div class="card p-4">
+        <h3 class="card-title text-left">Student List</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Subject Code</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php if (!empty($students)): ?>
+                <?php foreach ($students as $student): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($student['student_id']) ?></td>
+                        <td><?= htmlspecialchars($student['first_name']) ?></td>
+                        <td><?= htmlspecialchars($student['last_name']) ?></td>
+                        <td><?= htmlspecialchars($student['subject_code']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="4" class="text-center">No students registered yet.</td>
+                </tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</main>
 
-<?php include 'partials/footer.php'; ?> <!-- Include footer -->
-
-</body>
-</html>
+<?php
+include '../partials/footer.php'; // Include the footer file
+?>
