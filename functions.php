@@ -49,11 +49,7 @@ function addSubject($subject_code, $subject_name) {
     $stmt->bind_param("ss", $subject_code, $subject_name); // Bind parameters
 
     // Execute the statement and check for success
-    if ($stmt->execute()) {
-        return true; // Return true if insertion was successful
-    } else {
-        return false; // Return false if insertion failed
-    }
+    return $stmt->execute(); // Returns true on success, false on failure
 }
 
 // Function to fetch all subjects from the database
@@ -65,10 +61,5 @@ function fetchSubjects() {
     $result = $conn->query($sql); // Execute query
 
     // Check if there are results and return them as an associative array
-    if ($result && $result->num_rows > 0) {
-        return $result->fetch_all(MYSQLI_ASSOC); // Fetch all subjects
-    } else {
-        return []; // Return an empty array if no subjects found
-    }
+    return ($result && $result->num_rows > 0) ? $result->fetch_all(MYSQLI_ASSOC) : []; // Return empty array if no subjects found
 }
-?>
