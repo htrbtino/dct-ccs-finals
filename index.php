@@ -6,8 +6,11 @@ require_once 'functions.php'; // Include database connection setup
 // Guard: Check if the user is already logged in
 if (isset($_SESSION['user_id'])) {
     header("Location: admin/dashboard.php"); // Redirect to dashboard if already logged in
-    exit(); // Ensure no further code is executed after redirect
+    exit();
 }
+
+// Initialize variables for error messages
+$errors = [];
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
@@ -15,22 +18,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
     $email = postData('email');
     $password = postData('password'); // Password will be hashed in the function
 
-    // Call the login function and get the result
-    $result = login($email, $password);
+    // Validate input fields
+    if (empty($email)) {
+        $errors[] = "Email is required";
+    }
+    if (empty($password)) {
+        $errors[] = "Password is required";
+    }
 
-    // Check if a user was found
-    if ($result && $result->num_rows > 0) {
-        // Fetch user data
-        $user = $result->fetch_assoc();
-        
-        // Set session variables for logged-in user
-        $_SESSION['user_id'] = $user['id']; // Store user ID in session
-        $_SESSION['email'] = $email; // Store email in session
-        
-        header("Location: admin/dashboard.php"); // Redirect to dashboard in admin folder
-        exit(); // Ensure no further code is executed after redirect
-    } else {
-        $error_message = "Invalid email or password"; // Set error message for invalid credentials
+    // If no validation errors, attempt login
+    if (empty($errors)) {
+        $result = login($email, $password);
+
+        // Check if a user was found
+        if ($result && $result->num_rows > 0) {
+            // Fetch user data
+            $user = $result->fetch_assoc();
+            
+            // Set session variables for logged-in user
+            $_SESSION['user_id'] = $user['id']; // Store user ID in session
+            $_SESSION['email'] = $email; // Store email in session
+            
+            header("Location: admin/dashboard.php"); // Redirect to dashboard in admin folder
+            exit(); // Ensure no further code is executed after redirect
+        } else {
+            $errors[] = "Invalid email";
+            $errors[] = "Invalid password";
+        }
     }
 }
 ?>
@@ -45,21 +59,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
 <body class="bg-secondary-subtle">
     <div class="d-flex align-items-center justify-content-center vh-100">
         <div class="col-3">
-            <?php if (isset($error_message)): ?>
-                <div class="alert alert-danger" role="alert">
-                    <?php echo htmlspecialchars($error_message); ?>
+            <!-- Display Errors -->
+            <?php if (!empty($errors)): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>System Errors</strong>
+                    <ul class="mb-0">
+                        <?php foreach ($errors as $error): ?>
+                            <li><?php echo htmlspecialchars($error); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php endif; ?>
+
+            <!-- Login Form -->
             <div class="card">
                 <div class="card-body">
                     <h1 class="h3 mb-4 fw-normal">Login</h1>
                     <form method="post" action="">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="email" name="email" placeholder="user1@example.com" required>
+                            <input type="text" class="form-control" id="email" name="email" placeholder="user1@example.com" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
                             <label for="email">Email address</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
                             <label for="password">Password</label>
                         </div>
                         <div class="form-floating mb-3">
