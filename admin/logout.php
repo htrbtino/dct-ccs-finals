@@ -1,15 +1,13 @@
 <?php
-    // Logout Code Here
-    
 session_start(); // Start the session
 
-// Unset all of the session variables
+// Unset all session variables
 $_SESSION = [];
 
 // Destroy the session
 session_destroy();
 
-// Redirect to login page
-header("Location: ../index.php"); // Adjust path based on your directory structure
+// Redirect to the login page
+header("Location: ../index.php"); // Adjust path if needed
 exit();
 ?>

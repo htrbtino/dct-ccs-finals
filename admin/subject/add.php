@@ -80,11 +80,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <form method="POST" action="add.php"> <!-- Form submits to itself -->
             <div class="mb-3">
                 <label for="item_name" class="form-label"></label>
-                <input type="text" class="form-control" id="item_name" name="item_name" placeholder="Enter Subject Code">
+                <input type="text" class="form-control" id="item_name" name="item_name" 
+                       placeholder="Enter Subject Code" 
+                       value="<?php echo isset($_POST['item_name']) ? htmlspecialchars($_POST['item_name']) : ''; ?>">
             </div>
             <div class="mb-3">
                 <label for="item_description" class="form-label"></label>
-                <input type="text" class="form-control" id="item_description" name="item_description" placeholder="Enter Subject Name">
+                <input type="text" class="form-control" id="item_description" name="item_description" 
+                       placeholder="Enter Subject Name" 
+                       value="<?php echo isset($_POST['item_description']) ? htmlspecialchars($_POST['item_description']) : ''; ?>">
             </div>
             <button type="submit" class="btn btn-primary btn-sm w-100">Add Subject</button>
         </form>
