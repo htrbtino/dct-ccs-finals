@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = deleteStudentById($student_id); // Function to delete the student from the database
 
         if ($result) {
-            header("Location: register.php?delete_success=1"); // Redirect with success message
+            header("Location: delete.php?student_id=$student_id&delete_success=1"); // Redirect back to delete.php with success
             exit();
         } else {
             $error = "Failed to delete the student record. Please try again.";
@@ -48,6 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $error = "Invalid request.";
     }
+}
+
+// Check if redirected after successful deletion
+if (isset($_GET['delete_success']) && $_GET['delete_success'] == 1) {
+    $message = "Student record deleted successfully!";
 }
 ?>
 
@@ -63,6 +68,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <li class="breadcrumb-item active" aria-current="page">Delete Student</li>
         </ol>
     </nav>
+
+    <!-- Success Message -->
+    <?php if ($message): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?php echo htmlspecialchars($message); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
 
     <!-- Error Message -->
     <?php if ($error): ?>

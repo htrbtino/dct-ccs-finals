@@ -153,4 +153,5 @@ $students = fetchStudents();
 </main>
 
 <?php
-include '../partials/footer.php'; // Include
+include '../partials/footer.php'; // Include the footer file
+?>
