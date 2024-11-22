@@ -1,6 +1,0 @@
-[22-Nov-2024 00:17:05 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'subject_id' cannot be null in C:\laragon\www\dct-ccs-finals\functions.php:151
-Stack trace:
-#0 C:\laragon\www\dct-ccs-finals\functions.php(151): mysqli_stmt->execute()
-#1 C:\laragon\www\dct-ccs-finals\admin\student\register.php(49): addStudent(7, 'sdsds', 'dsadsad', NULL)
-#2 {main}
-  thrown in C:\laragon\www\dct-ccs-finals\functions.php on line 151
