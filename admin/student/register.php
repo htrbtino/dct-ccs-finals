@@ -101,16 +101,16 @@ $students = fetchStudents();
     <div class="card p-4 mb-5">
         <form method="POST" action="register.php">
             <div class="mb-3">
-                <label for="student_id" class="form-label">Student ID</label>
-                <input type="text" class="form-control" id="student_id" name="student_id" placeholder="Enter Student ID">
+                <label for="student_id" class="form-label"></label>
+                <input type="text" class="form-control" id="student_id" name="student_id" placeholder="Student ID">
             </div>
             <div class="mb-3">
-                <label for="first_name" class="form-label">First Name</label>
-                <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter First Name">
+                <label for="first_name" class="form-label"></label>
+                <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name">
             </div>
             <div class="mb-3">
-                <label for="last_name" class="form-label">Last Name</label>
-                <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter Last Name">
+                <label for="last_name" class="form-label"></label>
+                <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Last Name">
             </div>
             <button type="submit" class="btn btn-primary btn-sm w-100">Add Student</button>
         </form>

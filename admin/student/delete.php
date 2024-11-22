@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = deleteStudentById($student_id); // Function to delete the student from the database
 
         if ($result) {
-            header("Location: delete.php?student_id=$student_id&delete_success=1"); // Redirect back to delete.php with success
+            header("Location: delete.php?delete_success=1"); // Redirect back to delete.php with success
             exit();
         } else {
             $error = "Failed to delete the student record. Please try again.";
