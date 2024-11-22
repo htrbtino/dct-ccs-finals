@@ -25,7 +25,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $student_id = isset($_POST["student_id"]) ? trim($_POST["student_id"]) : "";
     $first_name = isset($_POST["first_name"]) ? trim($_POST["first_name"]) : "";
     $last_name = isset($_POST["last_name"]) ? trim($_POST["last_name"]) : "";
-    $subject_code = isset($_POST["subject_code"]) ? trim($_POST["subject_code"]) : "";
 
     // Validation
     if (empty($student_id)) {
@@ -37,18 +36,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($last_name)) {
         $error[] = "Last Name is required";
     }
-    if (empty($subject_code)) {
-        $error[] = "Subject Code is required";
-    }
-
-    // Check if subject exists
-    if (!empty($subject_code) && !subjectExists($subject_code)) {
-        $error[] = "Subject does not exist";
-    }
 
     // If no validation errors, proceed to register student
     if (empty($error)) {
-        $result = addStudent($student_id, $first_name, $last_name, $subject_code);
+        $result = addStudent($student_id, $first_name, $last_name, null); // Null for subject_code
 
         if ($result === "success") {
             $message = "Student registered successfully!";
@@ -72,7 +63,8 @@ $students = fetchStudents();
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Register Student</li>
+            <li class="breadcrumb-item"><a href="register.php">Register Student</a></li>
+            <li class="breadcrumb-item"><a href="attach_subject.php">Attach Subject</a></li>
         </ol>
     </nav>
 
@@ -101,28 +93,22 @@ $students = fetchStudents();
     <div class="card p-4 mb-5">
         <form method="POST" action="register.php">
             <div class="mb-3">
-                <label for="student_id" class="form-label">Student ID</label>
+                <label for="student_id" class="form-label"></label>
                 <input type="text" class="form-control" id="student_id" name="student_id" 
                        value="<?php echo isset($_POST['student_id']) ? htmlspecialchars($_POST['student_id']) : ''; ?>" 
-                       placeholder="Enter Student ID">
+                       placeholder="Student ID">
             </div>
             <div class="mb-3">
-                <label for="first_name" class="form-label">First Name</label>
+                <label for="first_name" class="form-label"></label>
                 <input type="text" class="form-control" id="first_name" name="first_name" 
                        value="<?php echo isset($_POST['first_name']) ? htmlspecialchars($_POST['first_name']) : ''; ?>" 
-                       placeholder="Enter First Name">
+                       placeholder="First Name">
             </div>
             <div class="mb-3">
-                <label for="last_name" class="form-label">Last Name</label>
+                <label for="last_name" class="form-label"></label>
                 <input type="text" class="form-control" id="last_name" name="last_name" 
                        value="<?php echo isset($_POST['last_name']) ? htmlspecialchars($_POST['last_name']) : ''; ?>" 
-                       placeholder="Enter Last Name">
-            </div>
-            <div class="mb-3">
-                <label for="subject_code" class="form-label">Subject Code</label>
-                <input type="text" class="form-control" id="subject_code" name="subject_code" 
-                       value="<?php echo isset($_POST['subject_code']) ? htmlspecialchars($_POST['subject_code']) : ''; ?>" 
-                       placeholder="Enter Subject Code">
+                       placeholder="Last Name">
             </div>
             <button type="submit" class="btn btn-primary btn-sm w-100">Register Student</button>
         </form>
@@ -137,7 +123,7 @@ $students = fetchStudents();
                     <th>Student ID</th>
                     <th>First Name</th>
                     <th>Last Name</th>
-                    <th>Subject Code</th>
+                    <th>Option</th>
                 </tr>
             </thead>
             <tbody>
@@ -147,7 +133,11 @@ $students = fetchStudents();
                         <td><?= htmlspecialchars($student['student_id']) ?></td>
                         <td><?= htmlspecialchars($student['first_name']) ?></td>
                         <td><?= htmlspecialchars($student['last_name']) ?></td>
-                        <td><?= htmlspecialchars($student['subject_code']) ?></td>
+                        <td>
+                            <a href="edit.php?student_id=<?= urlencode($student['student_id']) ?>" class="btn btn-info btn-sm">Edit</a>
+                            <a href="delete.php?student_id=<?= urlencode($student['student_id']) ?>" class="btn btn-danger btn-sm">Delete</a>
+                            <a href="attach_subject.php?student_id=<?= urlencode($student['student_id']) ?>" class="btn btn-warning btn-sm">Attach Subject</a>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
