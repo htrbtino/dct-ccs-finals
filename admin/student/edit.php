@@ -100,22 +100,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- Student Edit Form -->
     <div class="card p-4 mb-5">
         <form method="POST" action="edit.php?student_id=<?= urlencode($student_id) ?>">
-            <div class="mb-3">
-                <label for="student_id" class="form-label">Student ID</label>
+            <div class="form-floating mb-3">
                 <input type="text" class="form-control" id="student_id" name="student_id" 
                        value="<?= htmlspecialchars($student['student_id']) ?>" readonly>
+                <label for="student_id">Student ID</label>
             </div>
-            <div class="mb-3">
-                <label for="first_name" class="form-label">First Name</label>
+            <div class="form-floating mb-3">
                 <input type="text" class="form-control" id="first_name" name="first_name" 
                        value="<?= htmlspecialchars($student['first_name']) ?>" 
                        placeholder="Enter First Name">
+                <label for="first_name">First Name</label>
             </div>
-            <div class="mb-3">
-                <label for="last_name" class="form-label">Last Name</label>
+            <div class="form-floating mb-3">
                 <input type="text" class="form-control" id="last_name" name="last_name" 
                        value="<?= htmlspecialchars($student['last_name']) ?>" 
                        placeholder="Enter Last Name">
+                <label for="last_name">Last Name</label>
             </div>
             <button type="submit" class="btn btn-primary btn-sm w-100">Update Student</button>
         </form>
