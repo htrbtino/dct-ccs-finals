@@ -186,4 +186,14 @@ function updateStudent($student_id, $first_name, $last_name) {
 
     return $stmt->execute();
 }
+function deleteStudentById($student_id) {
+    global $conn; // Use global database connection
+
+    // Prepare SQL to delete the student record
+    $stmt = $conn->prepare("DELETE FROM students WHERE student_id = ?");
+    $stmt->bind_param("s", $student_id);
+
+    // Execute and return the result
+    return $stmt->execute();
+}
 ?>
