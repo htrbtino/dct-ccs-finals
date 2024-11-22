@@ -42,7 +42,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result = addStudent($student_id, $first_name, $last_name, null); // Null for subject_code
 
         if ($result === "success") {
-            $message = "Student registered successfully!";
+            header("Location: register.php?success=1"); // Redirect to register.php with success parameter
+            exit();
         } elseif ($result === "duplicate") {
             $error[] = "Duplicate Student Record"; // Handle duplicate student error
         } else {
@@ -51,20 +52,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
+// Check if redirected after successful registration
+if (isset($_GET['success']) && $_GET['success'] == 1) {
+    $message = "Student registered successfully!";
+}
+
 // Fetch existing students for display
 $students = fetchStudents();
 ?>
 
 <!-- Content Area -->
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pt-5">
-    <h1 class="h2">Register Student</h1>
+    <h1 class="h2">Register a New Student</h1>
 
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="register.php">Register Student</a></li>
-            <li class="breadcrumb-item"><a href="attach_subject.php">Attach Subject</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Register Student</li>
         </ol>
     </nav>
 
@@ -94,23 +99,17 @@ $students = fetchStudents();
         <form method="POST" action="register.php">
             <div class="mb-3">
                 <label for="student_id" class="form-label"></label>
-                <input type="text" class="form-control" id="student_id" name="student_id" 
-                       value="<?php echo isset($_POST['student_id']) ? htmlspecialchars($_POST['student_id']) : ''; ?>" 
-                       placeholder="Student ID">
+                <input type="text" class="form-control" id="student_id" name="student_id" placeholder="Student ID">
             </div>
             <div class="mb-3">
                 <label for="first_name" class="form-label"></label>
-                <input type="text" class="form-control" id="first_name" name="first_name" 
-                       value="<?php echo isset($_POST['first_name']) ? htmlspecialchars($_POST['first_name']) : ''; ?>" 
-                       placeholder="First Name">
+                <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name">
             </div>
             <div class="mb-3">
                 <label for="last_name" class="form-label"></label>
-                <input type="text" class="form-control" id="last_name" name="last_name" 
-                       value="<?php echo isset($_POST['last_name']) ? htmlspecialchars($_POST['last_name']) : ''; ?>" 
-                       placeholder="Last Name">
+                <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Last Name">
             </div>
-            <button type="submit" class="btn btn-primary btn-sm w-100">Register Student</button>
+            <button type="submit" class="btn btn-primary btn-sm w-100">Add Student</button>
         </form>
     </div>
 
