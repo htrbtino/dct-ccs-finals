@@ -165,4 +165,25 @@ function fetchStudents() {
     $result = $conn->query($sql);
     return ($result && $result->num_rows > 0) ? $result->fetch_all(MYSQLI_ASSOC) : [];
 }
+// Function to fetch a student by their ID
+function fetchStudentById($student_id) {
+    global $conn;
+
+    $stmt = $conn->prepare("SELECT * FROM students WHERE student_id = ?");
+    $stmt->bind_param("s", $student_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    return $result->num_rows > 0 ? $result->fetch_assoc() : null;
+}
+
+// Function to update a student
+function updateStudent($student_id, $first_name, $last_name) {
+    global $conn;
+
+    $stmt = $conn->prepare("UPDATE students SET first_name = ?, last_name = ? WHERE student_id = ?");
+    $stmt->bind_param("sss", $first_name, $last_name, $student_id);
+
+    return $stmt->execute();
+}
 ?>
