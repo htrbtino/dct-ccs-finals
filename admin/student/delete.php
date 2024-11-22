@@ -81,10 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <li><strong>First Name:</strong> <?php echo htmlspecialchars($student['first_name']); ?></li>
                 <li><strong>Last Name:</strong> <?php echo htmlspecialchars($student['last_name']); ?></li>
             </ul>
-            <form method="POST" action="delete.php">
-                <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>">
-                <button type="submit" class="btn btn-danger">Delete Student Record</button>
+            <form method="POST" action="delete.php" class="d-flex gap-2">
                 <a href="register.php" class="btn btn-secondary">Cancel</a>
+                <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>">
+                <button type="submit" class="btn btn-primary">Delete Student Record</button>
             </form>
         </div>
     <?php endif; ?>
