@@ -28,13 +28,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Validation
     if (empty($student_id)) {
-        $error[] = "Student ID is required";
+        $error[] = "Student ID is required.";
     }
     if (empty($first_name)) {
-        $error[] = "First Name is required";
+        $error[] = "First Name is required.";
     }
     if (empty($last_name)) {
-        $error[] = "Last Name is required";
+        $error[] = "Last Name is required.";
     }
 
     // If no validation errors, proceed to register student
@@ -45,16 +45,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: register.php?success=1"); // Redirect to register.php with success parameter
             exit();
         } elseif ($result === "duplicate") {
-            $error[] = "Duplicate Student Record"; // Handle duplicate student error
+            $error[] = "Duplicate Student Record."; // Handle duplicate student error
         } else {
             $error[] = "Failed to register student. Please try again.";
         }
     }
 }
 
-// Check if redirected after successful registration
+// Check if redirected after successful registration or deletion
 if (isset($_GET['success']) && $_GET['success'] == 1) {
     $message = "Student registered successfully!";
+}
+if (isset($_GET['delete_success']) && $_GET['delete_success'] == 1) {
+    $message = "Student deleted successfully!";
 }
 
 // Fetch existing students for display
@@ -73,10 +76,18 @@ $students = fetchStudents();
         </ol>
     </nav>
 
+    <!-- Display success message -->
+    <?php if ($message): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?php echo htmlspecialchars($message); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
     <!-- Display errors -->
     <?php if (!empty($error)): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>System Errors</strong>
+            <strong>System Errors:</strong>
             <ul>
                 <?php foreach ($error as $err): ?>
                     <li><?php echo htmlspecialchars($err); ?></li>
@@ -86,28 +97,20 @@ $students = fetchStudents();
         </div>
     <?php endif; ?>
 
-    <!-- Display success message -->
-    <?php if ($message): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?php echo htmlspecialchars($message); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
-
     <!-- Student Registration Form -->
     <div class="card p-4 mb-5">
         <form method="POST" action="register.php">
             <div class="mb-3">
-                <label for="student_id" class="form-label"></label>
-                <input type="text" class="form-control" id="student_id" name="student_id" placeholder="Student ID">
+                <label for="student_id" class="form-label">Student ID</label>
+                <input type="text" class="form-control" id="student_id" name="student_id" placeholder="Enter Student ID">
             </div>
             <div class="mb-3">
-                <label for="first_name" class="form-label"></label>
-                <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name">
+                <label for="first_name" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter First Name">
             </div>
             <div class="mb-3">
-                <label for="last_name" class="form-label"></label>
-                <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Last Name">
+                <label for="last_name" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter Last Name">
             </div>
             <button type="submit" class="btn btn-primary btn-sm w-100">Add Student</button>
         </form>
@@ -115,27 +118,27 @@ $students = fetchStudents();
 
     <!-- Student List Table -->
     <div class="card p-4">
-        <h3 class="card-title text-left">Student List</h3>
+        <h3 class="card-title">Student List</h3>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Student ID</th>
                     <th>First Name</th>
                     <th>Last Name</th>
-                    <th>Option</th>
+                    <th>Options</th>
                 </tr>
             </thead>
             <tbody>
             <?php if (!empty($students)): ?>
                 <?php foreach ($students as $student): ?>
                     <tr>
-                        <td><?= htmlspecialchars($student['student_id']) ?></td>
-                        <td><?= htmlspecialchars($student['first_name']) ?></td>
-                        <td><?= htmlspecialchars($student['last_name']) ?></td>
+                        <td><?php echo htmlspecialchars($student['student_id']); ?></td>
+                        <td><?php echo htmlspecialchars($student['first_name']); ?></td>
+                        <td><?php echo htmlspecialchars($student['last_name']); ?></td>
                         <td>
-                            <a href="edit.php?student_id=<?= urlencode($student['student_id']) ?>" class="btn btn-info btn-sm">Edit</a>
-                            <a href="delete.php?student_id=<?= urlencode($student['student_id']) ?>" class="btn btn-danger btn-sm">Delete</a>
-                            <a href="attach_subject.php?student_id=<?= urlencode($student['student_id']) ?>" class="btn btn-warning btn-sm">Attach Subject</a>
+                            <a href="edit.php?student_id=<?php echo urlencode($student['student_id']); ?>" class="btn btn-info btn-sm">Edit</a>
+                            <a href="delete.php?student_id=<?php echo urlencode($student['student_id']); ?>" class="btn btn-danger btn-sm">Delete</a>
+                            <a href="attach_subject.php?student_id=<?php echo urlencode($student['student_id']); ?>" class="btn btn-warning btn-sm">Attach Subject</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -150,5 +153,4 @@ $students = fetchStudents();
 </main>
 
 <?php
-include '../partials/footer.php'; // Include the footer file
-?>
+include '../partials/footer.php'; // Include
